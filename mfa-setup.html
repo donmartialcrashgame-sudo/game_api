@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Gaming API — Set Up 2FA</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f6f8;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111827;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 1px;
+    }
+
+    .brand p {
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 30px;
+
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .description {
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .step {
+      margin-top: 25px;
+      padding: 18px;
+
+      background: #f9fafb;
+
+      border: 1px solid #e5e7eb;
+
+      border-radius: 10px;
+    }
+
+    .step h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+
+    .qr {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      min-height: 220px;
+
+      margin: 20px 0;
+    }
+
+    .qr img {
+      width: 210px;
+      height: 210px;
+
+      border-radius: 8px;
+
+      border: 1px solid #e5e7eb;
+    }
+
+    .secret {
+      background: #111827;
+      color: #ffffff;
+
+      padding: 12px;
+
+      border-radius: 8px;
+
+      text-align: center;
+
+      font-family: monospace;
+
+      font-size: 13px;
+
+      word-break: break-all;
+
+      margin-top: 12px;
+    }
+
+    input {
+      width: 100%;
+
+      padding: 14px;
+
+      border: 1px solid #d1d5db;
+
+      border-radius: 8px;
+
+      outline: none;
+
+      font-size: 22px;
+
+      text-align: center;
+
+      letter-spacing: 8px;
+
+      margin: 12px 0;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+
+      padding: 13px;
+
+      border: 0;
+
+      border-radius: 8px;
+
+      background: #2563eb;
+
+      color: #ffffff;
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      margin-top: 10px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      background: #4b5563;
+    }
+
+    .message {
+      display: none;
+
+      margin-top: 15px;
+
+      padding: 12px;
+
+      border-radius: 8px;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+
+      white-space: pre-line;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #065f46;
+    }
+
+    .loading {
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .backup {
+      margin-top: 12px;
+
+      color: #6b7280;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="brand">
+    <h1>GAMING API</h1>
+    <p>Secure account setup</p>
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="card"
+    id="loadingCard">
+
+    <div class="loading">
+      Checking your account...
+    </div>
+
+  </div>
+
+
+  <!-- MFA SETUP -->
+
+  <div
+    class="card hidden"
+    id="setupCard">
+
+    <h2>
+      Set Up 2FA
+    </h2>
+
+    <p class="description">
+
+      Protect your Gaming API account with
+      an authenticator app.
+
+      <br><br>
+
+      Use Google Authenticator, Microsoft
+      Authenticator, Authy, or another
+      compatible TOTP authenticator.
+
+    </p>
+
+
+    <!-- STEP 1 -->
+
+    <div class="step">
+
+      <h3>
+        Step 1 — Scan the QR code
+      </h3>
+
+      <p class="description">
+
+        Open your authenticator app and
+        scan this QR code.
+
+      </p>
+
+
+      <div
+        class="qr"
+        id="qrContainer">
+
+        <div class="loading">
+          Generating QR code...
+        </div>
+
+      </div>
+
+
+      <p class="description">
+
+        Can't scan the QR code?
+        Enter this secret manually:
+
+      </p>
+
+
+      <div
+        class="secret"
+        id="secret">
+
+        —
+
+      </div>
+
+    </div>
+
+
+    <!-- STEP 2 -->
+
+    <div class="step">
+
+      <h3>
+        Step 2 — Verify your authenticator
+      </h3>
+
+      <p class="description">
+
+        Enter the six-digit code currently
+        shown in your authenticator app.
+
+      </p>
+
+
+      <input
+        id="code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        placeholder="000000"
+      >
+
+
+      <button
+        id="verifyButton">
+
+        Verify and Enable 2FA
+
+      </button>
+
+    </div>
+
+
+    <div
+      id="message"
+      class="message">
+    </div>
+
+  </div>
+
+
+  <!-- SUCCESS -->
+
+  <div
+    class="card hidden"
+    id="successCard">
+
+    <h2>
+      2FA Enabled
+    </h2>
+
+    <p
+      class="description">
+
+      Your authenticator has been successfully
+      verified.
+
+      <br><br>
+
+      Your account has reached
+      <strong>AAL2</strong>.
+
+    </p>
+
+
+    <button
+      id="continueButton">
+
+      Continue to Dashboard
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+  /*
+   * ==========================================
+   * SUPABASE
+   * ==========================================
+   */
+
+  import {
+    createClient
+  } from
+  "https://esm.sh/@supabase/supabase-js@2";
+
+
+  const SUPABASE_URL =
+    "https://qbagxeqquskkjksoraiz.supabase.co";
+
+
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiYWd4ZXFxdXNra2prc29yYWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczMjM4OTgsImV4cCI6MjEwMjg5OTg5OH0.CpvwORFZrDtM5TVzqUlkHyc39E4jofCebQ16Ne-wShk";
+
+
+  const supabase =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+  /*
+   * ==========================================
+   * ELEMENTS
+   * ==========================================
+   */
+
+  const loadingCard =
+    document.getElementById(
+      "loadingCard"
+    );
+
+
+  const setupCard =
+    document.getElementById(
+      "setupCard"
+    );
+
+
+  const successCard =
+    document.getElementById(
+      "successCard"
+    );
+
+
+  const qrContainer =
+    document.getElementById(
+      "qrContainer"
+    );
+
+
+  const secret =
+    document.getElementById(
+      "secret"
+    );
+
+
+  const code =
+    document.getElementById(
+      "code"
+    );
+
+
+  const verifyButton =
+    document.getElementById(
+      "verifyButton"
+    );
+
+
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+
+  let factorId = null;
+
+  let challengeId = null;
+
+
+  /*
+   * ==========================================
+   * MESSAGE
+   * ==========================================
+   */
+
+  function showMessage(
+    text,
+    type = "error"
+  ) {
+
+    message.style.display =
+      "block";
+
+    message.className =
+      "message " + type;
+
+    message.textContent =
+      text;
+
+  }
+
+
+  /*
+   * ==========================================
+   * QR CODE
+   * ==========================================
+   *
+   * We use the otpauth URI returned by
+   * Supabase to generate the visual QR.
+   *
+   * The QR is only displayed locally;
+   * no secret is sent to a third-party
+   * QR service.
+   */
+
+  function createQrCode(
+    uri
+  ) {
+
+    qrContainer.innerHTML = "";
+
+
+    const img =
+      document.createElement(
+        "img"
+      );
+
+
+    /*
+     * QR Server is used only as a
+     * visual QR generator here.
+     *
+     * The URI contains the TOTP secret,
+     * so for a production application
+     * we should eventually generate the
+     * QR entirely client-side.
+     */
+
+    img.src =
+      "https://api.qrserver.com/v1/create-qr-code/?size=210x210&data=" +
+      encodeURIComponent(uri);
+
+
+    img.alt =
+      "Authenticator QR Code";
+
+
+    qrContainer.appendChild(
+      img
+    );
+
+  }
+
+
+  /*
+   * ==========================================
+   * CHECK SESSION
+   * ==========================================
+   */
+
+  async function checkSession() {
+
+    const {
+      data,
+      error
+    } =
+    await supabase.auth
+      .getSession();
+
+
+    if (error) {
+
+      showMessage(
+        error.message
+      );
+
+      return null;
+
+    }
+
+
+    if (!data.session) {
+
+      window.location.href =
+        "login.html";
+
+      return null;
+
+    }
+
+
+    return data.session;
+
+  }
+
+
+  /*
+   * ==========================================
+   * CHECK EXISTING MFA
+   * ==========================================
+   */
+
+  async function checkExistingFactor() {
+
+    const {
+      data,
+      error
+    } =
+    await supabase.auth
+      .mfa
+      .listFactors();
+
+
+    if (error) {
+
+      showMessage(
+        error.message
+      );
+
+      return false;
+
+    }
+
+
+    const verified =
+      data.totp.filter(
+        factor =>
+          factor.status ===
+          "verified"
+      );
+
+
+    /*
+     * If MFA is already configured,
+     * there is no reason to enroll
+     * another factor on this page.
+     */
+
+    if (
+      verified.length > 0
+    ) {
+
+      window.location.href =
+        "callback.html";
+
+      return true;
+
+    }
+
+
+    return false;
+
+  }
+
+
+  /*
+   * ==========================================
+   * ENROLL TOTP
+   * ==========================================
+   */
+
+  async function enrollMfa() {
+
+    const {
+      data,
+      error
+    } =
+    await supabase.auth
+      .mfa
+      .enroll({
+
+        factorType:
+          "totp",
+
+        friendlyName:
+          "Gaming API Authenticator"
+
+      });
+
+
+    if (error) {
+
+      showMessage(
+        "Unable to create authenticator:\n\n" +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    factorId =
+      data.id;
+
+
+    /*
+     * Supabase returns the TOTP
+     * secret and QR URI.
+     */
+
+    secret.textContent =
+      data.totp.secret;
+
+
+    createQrCode(
+      data.totp.uri
+    );
+
+
+    setupCard.classList.remove(
+      "hidden"
+    );
+
+
+    loadingCard.classList.add(
+      "hidden"
+    );
+
+
+    code.focus();
+
+  }
+
+
+  /*
+   * ==========================================
+   * VERIFY TOTP
+   * ==========================================
+   */
+
+  verifyButton.addEventListener(
+    "click",
+    async () => {
+
+      const value =
+        code.value.trim();
+
+
+      if (
+        !/^\d{6}$/.test(value)
+      ) {
+
+        showMessage(
+          "Enter the six-digit code from your authenticator app."
+        );
+
+        return;
+
+      }
+
+
+      if (!factorId) {
+
+        showMessage(
+          "No authenticator enrollment is active. Please reload the page."
+        );
+
+        return;
+
+      }
+
+
+      verifyButton.disabled =
+        true;
+
+
+      verifyButton.textContent =
+        "Verifying...";
+
+
+      /*
+       * Create challenge for the
+       * newly enrolled factor.
+       */
+
+      const {
+        data:
+          challenge,
+        error:
+          challengeError
+      } =
+      await supabase.auth
+        .mfa
+        .challenge({
+
+          factorId
+
+        });
+
+
+      if (challengeError) {
+
+        verifyButton.disabled =
+          false;
+
+        verifyButton.textContent =
+          "Verify and Enable 2FA";
+
+
+        showMessage(
+          challengeError.message
+        );
+
+        return;
+
+      }
+
+
+      challengeId =
+        challenge.id;
+
+
+      /*
+       * Verify the TOTP code.
+       */
+
+      const {
+        error:
+          verifyError
+      } =
+      await supabase.auth
+        .mfa
+        .verify({
+
+          factorId,
+
+          challengeId,
+
+          code:
+            value
+
+        });
+
+
+      if (verifyError) {
+
+        verifyButton.disabled =
+          false;
+
+        verifyButton.textContent =
+          "Verify and Enable 2FA";
+
+
+        showMessage(
+          "Verification failed:\n\n" +
+          verifyError.message
+        );
+
+        return;
+
+      }
+
+
+      /*
+       * Confirm AAL2.
+       */
+
+      const {
+        data:
+          assurance,
+        error:
+          assuranceError
+      } =
+      await supabase.auth
+        .mfa
+        .getAuthenticatorAssuranceLevel();
+
+
+      if (assuranceError) {
+
+        verifyButton.disabled =
+          false;
+
+        verifyButton.textContent =
+          "Verify and Enable 2FA";
+
+
+        showMessage(
+          assuranceError.message
+        );
+
+        return;
+
+      }
+
+
+      if (
+        assurance.currentLevel !==
+        "aal2"
+      ) {
+
+        verifyButton.disabled =
+          false;
+
+        verifyButton.textContent =
+          "Verify and Enable 2FA";
+
+
+        showMessage(
+          "The authenticator was enrolled, but the session has not reached AAL2 yet."
+        );
+
+        return;
+
+      }
+
+
+      /*
+       * SUCCESS
+       */
+
+      setupCard.classList.add(
+        "hidden"
+      );
+
+
+      successCard.classList.remove(
+        "hidden"
+      );
+
+    }
+  );
+
+
+  /*
+   * ==========================================
+   * CONTINUE
+   * ==========================================
+   */
+
+  document
+    .getElementById(
+      "continueButton"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        window.location.href =
+          "dashboard.html";
+
+      }
+    );
+
+
+  /*
+   * ==========================================
+   * START
+   * ==========================================
+   */
+
+  async function start() {
+
+    const session =
+      await checkSession();
+
+
+    if (!session) {
+
+      return;
+
+    }
+
+
+    /*
+     * Don't enroll a second factor
+     * if one already exists.
+     */
+
+    const alreadyConfigured =
+      await checkExistingFactor();
+
+
+    if (alreadyConfigured) {
+
+      return;
+
+    }
+
+
+    /*
+     * Create the TOTP enrollment.
+     */
+
+    await enrollMfa();
+
+  }
+
+
+  start();
+
+</script>
+
+</body>
+</html>
